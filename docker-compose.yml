@@ -1,0 +1,14 @@
+services:
+  bc125at:
+    image: amyfs/bc125at
+    container_name: bc125at
+    hostname: bc125at
+    device_cgroup_rules:
+      - 'c 166:* rwm'
+      - 'c 204:* rwm'
+    devices:
+      - '/dev/snd'
+    ports:
+      - '5002:5002'
+    volumes:
+      - /dev:/dev:rw

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="flex six center">
+{% for i in range(1,11) %}
+    {% if bank_id|int == i %}
+        <strong>{{ bank_names[i-1] }}</strong>
+    {% else %}
+        <a href="{{ url_for('channels_bank',bank_id=i) }}">{{ bank_names[i-1] }}</a>&nbsp;
+    {% endif %}
+{% endfor %}
+</div>
+<h3 class="full"> {{ bank_names[bank_id|int -1] }} </h3>
+<table class="full">
+    <thead>
+        <th>Index</td>
+        <th>Name</th>
+        <th>Frequency</th>
+        <th>Modulation</th>
+        <!--<th>CTCSS/DCS</th>-->
+        <th>Delay</th>
+        <th>Lockout</th>
+        <th>Priority</th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for item in channels %}
+        <tr id='row-{{ item.index }}' class={{'active' if not item.locked}}>
+                <td>{{ item.index }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.frequency }}</td>
+                <td>{{ item.modulation }}</td>
+                <!--<td>{{ item.ctcss }}</td>-->
+                <td>{{ item.delay }}</td>
+                {% if item.locked %}
+                    <td>Locked</td>
+                {% else %}
+                    <td>Unlocked</td>
+                {% endif %}
+                {% if item.priority %}
+                    <td>Priority</td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+                <td>
+                    <button class="button" onclick="rowState({{item.index}})">
+                        Edit
+                    </button></td>
+            </tr>
+            <tr data-item="" id='row-{{item.index}}-edit'
+                class="hidden{{' active' if item.lockout }}">
+                <form method="POST" action="/channel/{{item.index}}">
+                <td>{{ item.index }}</td>
+                <td><textarea name="name">{{ item.name }}</textarea></td>
+                <td><input type="text" name="frequency" value="{{ item.frequency }}" /></td>
+                <td><input type="text" name="modulation" value="{{ item.modulation }}" /></td>
+                <td><input type="text" name="delay" value="{{ item.delay }}" /></td>
+                <td><label class="locker">
+                    <input type="checkbox" name="locked"
+                {{ 'checked' if item.locked else 'unchecked' }} />
+                    <span class="pseudo button state"></span>
+                </label></td>
+                <td>
+                    <input type="radio" name="priority_bank_{{ loop.index0 }}" disabled
+                        {{ 'checked' if item.priority else 'unchecked' }} />
+                </td>
+                <td><input value="Submit" type="submit" /></form></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+{% block footer %}
+{% endblock %}

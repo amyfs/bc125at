@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block body %}
+    <form method="POST" action="/settings" class="three">
+        <div>
+            <input class="stack" type="text" name="device_name" value="{{ settings.name }}"/>
+            <select class="stack" name="device_selector" value=>
+                {% for i in serial_devices %}
+                    <option value="{{i.device}}"
+                        {{'selected' if i.device == settings.device }}>{{i.device}} {{i.serial_number}}</option>
+                {% endfor %}
+            </select>
+            <input class="stack" type="text" name="device_model" value="{{ settings.model }}" />
+        </div>
+        <br />
+        <table>
+            <thead>
+                <th>Bank Name</th>
+                <th>Bank State</th>
+            </thead>
+            <tbody>
+                {% for bank in settings.bank_names.split(',') %}
+                <tr>
+                    <td><input type="text" name="bank_{{loop.index0}}_name" value="{{ bank }}" /></td>
+                    <td>
+                        <label class="enabler">
+                            <input name="bank_{{loop.index0}}_enabled" type="checkbox" 
+                                {{ 'checked' if settings.bank_state[loop.index0] == '1' else 'unchecked' }}
+                            />
+                            <span class="pseudo button state"></span>
+                        </label>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br />
+        <table>
+            <thead>
+                <th>Outputs</th>
+                <th></th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><h3>Telegram</h3></td>
+                    <td>
+                        <input name="output_telegram_token" type="text" size="50" 
+                                placeholder="Token" value="{{ settings.output_telegram_token }}" />
+                        <input name="output_telegram_id" type="text" size="10" placeholder="Chat ID" value="{{ settings.output_telegram_id }}" />
+                        <label class="enabler">
+                            <input name="output_telegram_enabled" type="checkbox"
+                                {{ 'checked' if settings.output_telegram_enabled else 'unchecked' }}
+                            />
+                            <span class="pseudo button state"></span>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td><h3>Discord</h3></td>
+                    <td>
+                        <input name="output_discord_hook" type="text" placeholder="Webhook" value="{{ settings.output_discord_hook }}" />
+                        <label class="enabler">
+                            <input name="output_discord_enabled" type="checkbox"
+                                {{ 'checked' if settings.output_discord_enabled else 'unchecked' }}
+                            />
+                            <span class="pseudo button state"></span>
+                        </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        <div>
+            <input type="submit" value="Save Settings" />
+        </div>
+    </form>
+{% endblock %}

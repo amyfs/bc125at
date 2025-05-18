@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block body %}
+<table class="full">
+	<thead>
+		<th>Index</th>
+		<th>Channel</th>
+		<th>Ch. Number</th>
+		<th>Timestamp</th>
+		<th>Audio</th>
+	</thead>
+	<tbody>
+		{% for item in entries.items %}
+		<tr>
+			<td>{{ item.id }}</td>
+			<td>{{ item.channel_name }}</td>
+			<td><a href="/channels#row-{{ item.channel_num }}">{{ item.channel_num }}</a></td>
+			<td>{{ item.timestamp }}</td>
+            <td><audio controls src="data:audio/mpeg;base64,{{ audio[loop.index0] }}" ></audio> <a download="{{item.channel_name}}_{{item.frequency}}_{{item.timestamp|replace(" ","_")}}.mp3" href="data:audio/mpeg;base64,{{ audio[loop.index0] }}">Download</a></td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}
+{% block footer %}
+{% for page in entries.iter_pages() %}
+    {% if page %}
+        {% if page != entries.page %}
+        <a href="{{ url_for('hits',page=page )}}">{{ page }}</a>
+        {% else %}
+            <strong>{{ page }}</strong>
+        {% endif %}
+    {% else %}
+        <span>...</span>
+    {% endif %}
+{% endfor %}
+{% endblock %}

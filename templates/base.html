@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+	<head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic">
+        <link rel="stylesheet" href="{{ url_for('static',filename='styles.css') }}">
+        <script src="{{ url_for('static',filename='main.js') }}"></script>
+    </head>
+	<body>
+		<nav>
+			<a href="/" class="brand">BC125AT</a>
+			<span id="station"></span>
+			<input id="bmenub" type="checkbox" class="show">
+  			<label for="bmenub" class="burger pseudo button">menu</label>
+			<div class="menu">
+				<a href="/channels">Channels</a>
+				<a href="/hits">Hits</a>
+				<a href="/settings">Settings</a>
+			</div>
+		</nav>
+		<div class="flex twelve-1200 one-800">
+			<div class="full"><br /> <br /></div>
+			<div class="one-1200"><br /></div>
+			<div class="one-1200 g-sidebar">
+				<aside class="b-sidebar">
+					{% block sidebar %}{% endblock %}
+				</aside>
+			</div>
+			<div class="two-third-1200 one-800">
+				{% block body %}{% endblock %}
+			</div>
+            <footer class="full">
+		        {% block footer %}{% endblock %}	
+            </footer>
+		<script>
+		    const evt = new EventSource('/api/listener-heartbeat');
+
+		    evt.onmessage = (e) => {
+			document.querySelector('#station').innerText = `Station: ${e.data}`;
+		    }
+		</script>
+	</body>
+</html>

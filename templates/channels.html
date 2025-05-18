@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block sidebar %}
+{% for i in range(1,10) %}
+	<a class="pseudo button" href="#bank_{{ i-1 }}">{{ bank_names[i-1] }}</a>
+{% endfor %}
+<a class="pseudo button" href="#top">Back to Top</a>
+{% endblock %}
+
+{% block body %}
+{% for i in range(1,11) %}
+	<h3 id="bank_{{ i-1 }}" class="full"> {{ bank_names[i-1] }} </h3>
+	<table class="full">
+		<thead>
+			<th>Index</td>
+			<th>Name</th>
+			<th>Frequency</th>
+			<th>Modulation</th>
+			<!--<th>CTCSS/DCS</th>-->
+			<th>Delay</th>
+			<th>Lockout</th>
+			<th>Priority</th>
+			<th></th>
+		</thead>
+		<tbody>
+			{% for j in range(0,50) %}
+			{% set idx = (i-1)*50+j %}
+			{% set item = channels[idx] %}
+			<tr data-item="" id='row-{{ item.index }}' 
+				class={{'active' if not item.locked}}>
+					<td>{{ item.index }}</td>
+					<td>{{ item.name }}</td>
+					<td>{{ item.frequency }}</td>
+					<td>{{ item.modulation }}</td>
+					<!--<td>{{ item.ctcss }}</td>-->
+					<td>{{ item.delay }}</td>
+					{% if item.locked %}
+						<td>Locked</td>
+					{% else %}
+						<td>Unlocked</td>
+					{% endif %}
+					{% if item.priority %}
+						<td>Priority</td>
+					{% else %}
+						<td></td>
+					{% endif %}
+					<td>
+                        <button class="button" onclick="rowState({{item.index}})">
+                            Edit
+                        </button></td>
+				</tr>
+				<tr data-item="" id='row-{{item.index}}-edit'
+				    class="hidden{{' active' if item.lockout }}">
+					<form method="POST" action="/channel/{{item.index}}">
+					<td>{{ item.index }}</td>
+					<td><textarea name="name">{{ item.name }}</textarea></td>
+					<td><input type="text" name="frequency" value="{{ item.frequency }}" /></td>
+					<td><input type="text" name="modulation" value="{{ item.modulation }}" /></td>
+					<td><input type="text" name="delay" value="{{ item.delay }}" /></td>
+					<td><label class="locker">
+						<input type="checkbox" name="locked"
+					{{ 'checked' if item.locked else 'unchecked' }} />
+						<span class="pseudo button state"></span>
+					</label></td>
+					<td>
+                        <input type="radio" name="priority_bank_{{ i-1 }}" disabled
+                            {{ 'checked' if item.priority else 'unchecked' }} />
+					</td>
+					<td><input value="Submit" type="submit" /></form></td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<br />
+{% endfor %}
+{% endblock %}
+
